@@ -1,5 +1,7 @@
 package com.ashrafi.newsapp.presentation.feature.newsList
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +31,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -37,8 +41,10 @@ import com.ashrafi.newsapp.R
 import com.ashrafi.newsapp.core.ui.components.BorderButton
 import com.ashrafi.newsapp.core.ui.components.FailureView
 import com.ashrafi.newsapp.core.ui.components.NoDataView
+import com.ashrafi.newsapp.core.ui.theme.Gray
 import com.ashrafi.newsapp.core.ui.theme.Purple40
 import com.ashrafi.newsapp.domain.entity.NewsEntity
+import com.ashrafi.newsapp.utils.DateTimeUtils
 
 @Composable
 fun NewsListPage(
@@ -152,11 +158,20 @@ private fun NewsItemView(
     modifier: Modifier,
     item: NewsEntity.ArticleEntity
 ) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = Gray,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(4.dp)
+    ) {
         AsyncImage(
             modifier = Modifier
-                .size(100.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .size(130.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Gray),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(item.imageUrl)
                 .placeholder(R.drawable.ic_news)
@@ -173,8 +188,30 @@ private fun NewsItemView(
                 .weight(1f)
         ) {
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = item.title ?: "",
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
+                text = item.description ?: "",
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 14.sp
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
+                text = DateTimeUtils.formatDate(item.publishedAt),
+                maxLines = 1,
+                fontSize = 12.sp
             )
         }
     }
