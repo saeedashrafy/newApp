@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,9 +43,11 @@ import com.ashrafi.newsapp.R
 import com.ashrafi.newsapp.core.ui.components.BorderButton
 import com.ashrafi.newsapp.core.ui.components.FailureView
 import com.ashrafi.newsapp.core.ui.components.NoDataView
+import com.ashrafi.newsapp.core.ui.components.TabView
 import com.ashrafi.newsapp.core.ui.theme.Gray
 import com.ashrafi.newsapp.core.ui.theme.Purple40
 import com.ashrafi.newsapp.domain.entity.NewsEntity
+import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 import com.ashrafi.newsapp.utils.DateTimeUtils
 
 @Composable
@@ -53,15 +57,65 @@ fun NewsListPage(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    NewsPaginationAdapter(
-        data = state.newsList,
-        isFailure = state.isFailure,
-        showLoading = state.showLoading,
-        modifier = Modifier.fillMaxSize(),
-        onFetchMore = {
-            viewModel.sendEvent(NewsListEvent.GetNewsList)
-        }
+    NewsListScreen(
+        state = state,
+        sendEvent = viewModel::processIntents
     )
+}
+
+@Composable
+private fun NewsListScreen(
+    state: NewsListState,
+    sendEvent: (NewsListEvent) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        TabBarView(
+            tabsList = state.tabList,
+            selectedTab = state.selectedTab,
+            modifier = Modifier.fillMaxWidth(),
+            onTabClick = {
+                sendEvent(NewsListEvent.OnTabChanged(it))
+            }
+        )
+
+        NewsPaginationAdapter(
+            data = state.newsList,
+            isFailure = state.isFailure,
+            showLoading = state.showLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            onItemClick = {
+
+            },
+            onFetchMore = {
+                sendEvent(NewsListEvent.GetNewsList)
+            }
+        )
+    }
+}
+
+@Composable
+fun TabBarView(
+    tabsList: List<QueryType>,
+    selectedTab: QueryType,
+    onTabClick: (QueryType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(tabsList) { tabItem ->
+            TabView(
+                title = tabItem.name,
+                isSelected = selectedTab == tabItem,
+                onTabClick = {
+                    onTabClick(tabItem)
+                }
+            )
+        }
+    }
 }
 
 
@@ -71,6 +125,7 @@ private fun NewsPaginationAdapter(
     isFailure: Boolean,
     showLoading: Boolean,
     modifier: Modifier = Modifier,
+    onItemClick: () -> Unit,
     onFetchMore: () -> Unit,
 ) {
     val lazyColumnListState = rememberLazyListState()

@@ -3,6 +3,7 @@ package com.ashrafi.newsapp.domain.useCase
 import com.ashrafi.newsapp.domain.entity.NewsEntity
 import com.ashrafi.newsapp.domain.entity.common.ResultState
 import com.ashrafi.newsapp.domain.repository.NewsRepository
+import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 import javax.inject.Inject
 
 class GetNewsUseCaseImpl @Inject constructor(
@@ -11,9 +12,12 @@ class GetNewsUseCaseImpl @Inject constructor(
 
     override suspend fun invoke(
         page: Int,
-        size: Int
+        queryType: String
     ): ResultState<NewsEntity> {
-        return newsRepository.getNews()
+        return newsRepository.getNews(
+            page = page,
+            queryType = queryType
+        )
     }
 
 }

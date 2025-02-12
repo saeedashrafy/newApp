@@ -5,5 +5,8 @@ import com.ashrafi.newsapp.domain.entity.common.ResultState
 
 
 interface NewsRemoteDataSource {
-    suspend fun getNews(): ResultState<NewsEntity>
+    suspend fun getNews(
+        page: Int,
+        queryType: String
+    ): ResultState<NewsEntity>
 }

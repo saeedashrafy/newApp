@@ -28,7 +28,7 @@ abstract class BaseViewModel<UiState : ViewState, Intent : ViewIntent, Effect : 
      private fun observeEvents() {
         viewModelScope.launch {
             _event.collect{
-                sendEvent(it)
+                processIntents(it)
             }
         }
      }
@@ -53,7 +53,7 @@ abstract class BaseViewModel<UiState : ViewState, Intent : ViewIntent, Effect : 
     abstract fun initialState(): UiState
 
 
-    abstract fun sendEvent(viewIntent: Intent)
+    abstract fun processIntents(viewIntent: Intent)
 }
 
 interface ViewState

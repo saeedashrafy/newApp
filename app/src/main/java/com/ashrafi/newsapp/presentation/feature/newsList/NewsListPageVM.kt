@@ -1,11 +1,11 @@
 package com.ashrafi.newsapp.presentation.feature.newsList
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ashrafi.newsapp.core.common.disptacher.DispatcherAnnotations
 import com.ashrafi.newsapp.domain.entity.common.ResultState
 import com.ashrafi.newsapp.domain.useCase.GetNewsUseCase
 import com.ashrafi.newsapp.presentation.base.BaseViewModel
+import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -18,23 +18,47 @@ class NewsListPageVM @Inject constructor(
     private val getNewsUseCase: GetNewsUseCase
 ) : BaseViewModel<NewsListState, NewsListEvent, NewsListEffect>() {
 
-    private var pageNumber: Int = 0
-    private val pageSize: Int = 50
+    private var pageNumber: Int = 1
+    private val pageSize: Int = 100
     private var canPaginate: Boolean = true
     private var getNewsListJob: Job? = null
 
 
     override fun initialState(): NewsListState {
-        return NewsListState()
+        return NewsListState(
+            tabList = makeTabItems()
+        )
     }
 
-    override fun sendEvent(viewIntent: NewsListEvent) {
+    override fun processIntents(viewIntent: NewsListEvent) {
         viewModelScope.launch {
             when (viewIntent) {
                 NewsListEvent.GetNewsList -> getNewsList()
+                is NewsListEvent.OnTabChanged -> onTabChanged(viewIntent.selectedTab)
             }
         }
     }
+
+    private fun makeTabItems(): List<QueryType> {
+        return QueryType.entries
+    }
+
+    private fun onTabChanged(selectedTab: QueryType) {
+        updateState {
+            it.copy(
+                selectedTab = selectedTab
+            )
+        }
+
+        pageNumber = 1
+        updateState {
+            it.copy(
+                newsList = emptyList()
+            )
+        }
+        getNewsList()
+    }
+
 
     private fun getNewsList() {
         getNewsListJob?.cancel()
@@ -50,7 +74,7 @@ class NewsListPageVM @Inject constructor(
 
                 getNewsUseCase(
                     page = pageNumber,
-                    size = pageSize
+                    queryType = getState().selectedTab.name
                 ).let { result ->
 
                     when (result) {
@@ -61,7 +85,7 @@ class NewsListPageVM @Inject constructor(
                             val dataList = getState().newsList.toMutableList()
                             result.data?.articles?.let { dataList.addAll(it) }
 
-                            canPaginate = result.data?.totalResults == pageSize
+                            canPaginate = (result.data?.totalResults ?: 0) > pageNumber * pageSize
 
                             updateState {
                                 it.copy(
