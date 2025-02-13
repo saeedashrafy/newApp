@@ -9,7 +9,6 @@ import com.ashrafi.newsapp.presentation.base.BaseViewModel
 import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,6 +51,8 @@ class NewsListPageVM @Inject constructor(
         }
 
         pageNumber = 1
+        canPaginate = true
+
         updateState {
             it.copy(
                 newsList = emptyList()
@@ -63,6 +64,7 @@ class NewsListPageVM @Inject constructor(
 
     private fun getNewsList() {
         viewModelScope.launch(ioDispatcher) {
+
             if (canPaginate) {
                 updateState {
                     it.copy(
