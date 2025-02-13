@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.ashrafi.newsapp.presentation.feature.newsDetails.NewsDetailsPage
 import com.ashrafi.newsapp.presentation.feature.newsList.NewsListPage
 
 
@@ -17,17 +18,16 @@ fun AppGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destinations.NewsListScreen.route,
+        startDestination = Destinations.NewsListDestination.route,
         modifier = Modifier.padding(paddingValues)
     ) {
 
-        composable(Destinations.NewsListScreen.route) {
-            NewsListPage() {
-                navController.navigate(Destinations.NewsDetailsScreen.route)
-            }
+        composable(Destinations.NewsListDestination.route) {
+            NewsListPage(navController = navController)
         }
 
-        composable(Destinations.NewsDetailsScreen.route) {
+        composable(Destinations.NewsDetailsDestination.route) {
+            NewsDetailsPage()
         }
     }
 }

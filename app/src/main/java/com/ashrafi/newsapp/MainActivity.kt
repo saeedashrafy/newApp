@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
             navController.addOnDestinationChangedListener { controller, _, _ ->
                 canPop =
-                    Destinations.NewsListScreen.route !== (controller.currentBackStackEntry?.destination?.route)
+                    Destinations.NewsListDestination.route !== (controller.currentBackStackEntry?.destination?.route)
 
             }
             val navigationIcon: (@Composable () -> Unit) =

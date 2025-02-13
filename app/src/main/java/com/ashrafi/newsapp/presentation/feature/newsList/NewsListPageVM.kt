@@ -2,8 +2,9 @@ package com.ashrafi.newsapp.presentation.feature.newsList
 
 import androidx.lifecycle.viewModelScope
 import com.ashrafi.newsapp.core.common.disptacher.DispatcherAnnotations
+import com.ashrafi.newsapp.domain.entity.NewsEntity
 import com.ashrafi.newsapp.domain.entity.common.ResultState
-import com.ashrafi.newsapp.domain.useCase.GetNewsUseCase
+import com.ashrafi.newsapp.domain.useCase.NewsListUseCase
 import com.ashrafi.newsapp.presentation.base.BaseViewModel
 import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsListPageVM @Inject constructor(
     @DispatcherAnnotations.IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val getNewsUseCase: GetNewsUseCase
+    private val newsListUseCase: NewsListUseCase
 ) : BaseViewModel<NewsListState, NewsListEvent, NewsListEffect>() {
 
     private var pageNumber: Int = 1
@@ -35,6 +36,7 @@ class NewsListPageVM @Inject constructor(
             when (viewIntent) {
                 NewsListEvent.GetNewsList -> getNewsList()
                 is NewsListEvent.OnTabChanged -> onTabChanged(viewIntent.selectedTab)
+                is NewsListEvent.OnItemClick -> onItemClick(viewIntent.item)
             }
         }
     }
@@ -61,9 +63,7 @@ class NewsListPageVM @Inject constructor(
 
 
     private fun getNewsList() {
-        getNewsListJob?.cancel()
-
-        getNewsListJob = viewModelScope.launch(ioDispatcher) {
+        viewModelScope.launch(ioDispatcher) {
             if (canPaginate) {
                 updateState {
                     it.copy(
@@ -72,7 +72,7 @@ class NewsListPageVM @Inject constructor(
                     )
                 }
 
-                getNewsUseCase(
+                newsListUseCase.getNewsList(
                     page = pageNumber,
                     queryType = getState().selectedTab.name
                 ).let { result ->
@@ -109,5 +109,12 @@ class NewsListPageVM @Inject constructor(
         }
     }
 
+
+    private fun onItemClick(item: NewsEntity.ArticleEntity) {
+        newsListUseCase.setSelectedNews(item)
+        sendEffect {
+            NewsListEffect.NavigateToDetails
+        }
+    }
 
 }

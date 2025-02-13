@@ -3,14 +3,15 @@ package com.ashrafi.newsapp.domain.useCase
 import com.ashrafi.newsapp.domain.entity.NewsEntity
 import com.ashrafi.newsapp.domain.entity.common.ResultState
 import com.ashrafi.newsapp.domain.repository.NewsRepository
-import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 import javax.inject.Inject
 
-class GetNewsUseCaseImpl @Inject constructor(
+class NewsListUseCaseImpl @Inject constructor(
     private val newsRepository: NewsRepository
-) : GetNewsUseCase {
+) : NewsListUseCase {
 
-    override suspend fun invoke(
+    private var selectedNews: NewsEntity.ArticleEntity? = null
+
+    override suspend fun getNewsList(
         page: Int,
         queryType: String
     ): ResultState<NewsEntity> {
@@ -18,6 +19,14 @@ class GetNewsUseCaseImpl @Inject constructor(
             page = page,
             queryType = queryType
         )
+    }
+
+    override fun setSelectedNews(newsItem: NewsEntity.ArticleEntity) {
+        selectedNews = newsItem
+    }
+
+    override fun getSelectedNews(): NewsEntity.ArticleEntity? {
+        return selectedNews
     }
 
 }

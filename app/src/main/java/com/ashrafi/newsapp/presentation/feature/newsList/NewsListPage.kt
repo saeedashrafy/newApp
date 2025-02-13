@@ -2,6 +2,7 @@ package com.ashrafi.newsapp.presentation.feature.newsList
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ashrafi.newsapp.R
@@ -47,13 +49,15 @@ import com.ashrafi.newsapp.core.ui.components.TabView
 import com.ashrafi.newsapp.core.ui.theme.Gray
 import com.ashrafi.newsapp.core.ui.theme.Purple40
 import com.ashrafi.newsapp.domain.entity.NewsEntity
+import com.ashrafi.newsapp.presentation.base.CollectLatestOnStart
 import com.ashrafi.newsapp.presentation.feature.enums.QueryType
+import com.ashrafi.newsapp.presentation.navigation.Destinations
 import com.ashrafi.newsapp.utils.DateTimeUtils
 
 @Composable
 fun NewsListPage(
     viewModel: NewsListPageVM = hiltViewModel(),
-    onClickDetails: () -> Unit
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -61,6 +65,14 @@ fun NewsListPage(
         state = state,
         sendEvent = viewModel::processIntents
     )
+
+    CollectLatestOnStart(flow = viewModel.effect) { effect ->
+        when (effect) {
+            NewsListEffect.NavigateToDetails -> {
+                navController.navigate(Destinations.NewsDetailsDestination.route)
+            }
+        }
+    }
 }
 
 @Composable
@@ -68,7 +80,11 @@ private fun NewsListScreen(
     state: NewsListState,
     sendEvent: (NewsListEvent) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         TabBarView(
             tabsList = state.tabList,
             selectedTab = state.selectedTab,
@@ -85,8 +101,8 @@ private fun NewsListScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
-            onItemClick = {
-
+            onItemClick = { item ->
+                sendEvent(NewsListEvent.OnItemClick(item))
             },
             onFetchMore = {
                 sendEvent(NewsListEvent.GetNewsList)
@@ -125,7 +141,7 @@ private fun NewsPaginationAdapter(
     isFailure: Boolean,
     showLoading: Boolean,
     modifier: Modifier = Modifier,
-    onItemClick: () -> Unit,
+    onItemClick: (NewsEntity.ArticleEntity) -> Unit,
     onFetchMore: () -> Unit,
 ) {
     val lazyColumnListState = rememberLazyListState()
@@ -153,7 +169,10 @@ private fun NewsPaginationAdapter(
         itemsIndexed(items = data) { _, item ->
             NewsItemView(
                 modifier = Modifier.fillMaxWidth(),
-                item = item
+                item = item,
+                onItemClick = {
+                    onItemClick(item)
+                }
             )
         }
 
@@ -211,7 +230,8 @@ private fun NewsPaginationAdapter(
 @Composable
 private fun NewsItemView(
     modifier: Modifier,
-    item: NewsEntity.ArticleEntity
+    item: NewsEntity.ArticleEntity,
+    onItemClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -221,6 +241,9 @@ private fun NewsItemView(
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(4.dp)
+            .clickable {
+                onItemClick()
+            }
     ) {
         AsyncImage(
             modifier = Modifier

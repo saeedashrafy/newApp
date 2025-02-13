@@ -44,7 +44,7 @@ abstract class BaseViewModel<UiState : ViewState, Intent : ViewIntent, Effect : 
 
     }
 
-    protected fun updateEffect(handler: () -> Effect) {
+    protected fun sendEffect(handler: () -> Effect) {
         viewModelScope.launch {
             _effect.send(handler())
         }
