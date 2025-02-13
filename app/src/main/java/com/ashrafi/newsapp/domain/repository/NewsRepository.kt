@@ -8,6 +8,8 @@ import com.ashrafi.newsapp.presentation.feature.enums.QueryType
 interface NewsRepository {
     suspend fun getNews(
         page: Int,
-        queryType: String
+        queryType: String,
+        fromDate: String,
+        toDate: String
     ): ResultState<NewsEntity>
 }

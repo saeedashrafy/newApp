@@ -71,5 +71,6 @@ class RemoteModule {
     companion object {
         const val BASE_URL = "https://newsapi.org/"
         const val API_KEY = "1a7eb879f601484b9f4a8bca111c9997"
+        const val SORT_BY = "publishedAt"
     }
 }

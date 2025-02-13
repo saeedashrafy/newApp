@@ -2,7 +2,10 @@ package com.ashrafi.newsapp.utils
 
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -23,4 +26,15 @@ object DateTimeUtils {
         return outputFormat.format(date)
     }
 
+    fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    fun getYesterdayDate(): String {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, -1) // Subtract 1 day to get yesterday
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(calendar.time)
+    }
 }

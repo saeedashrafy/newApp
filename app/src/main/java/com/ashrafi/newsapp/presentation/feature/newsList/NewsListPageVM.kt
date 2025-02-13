@@ -22,7 +22,6 @@ class NewsListPageVM @Inject constructor(
     private var pageNumber: Int = 1
     private val pageSize: Int = 100
     private var canPaginate: Boolean = true
-    private var getNewsListJob: Job? = null
 
 
     override fun initialState(): NewsListState {
@@ -74,7 +73,7 @@ class NewsListPageVM @Inject constructor(
 
                 newsListUseCase.getNewsList(
                     page = pageNumber,
-                    queryType = getState().selectedTab.name
+                    queryType = getState().selectedTab.name,
                 ).let { result ->
 
                     when (result) {

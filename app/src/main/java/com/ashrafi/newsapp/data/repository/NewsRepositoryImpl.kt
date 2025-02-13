@@ -13,11 +13,15 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun getNews(
         page: Int,
-        queryType: String
+        queryType: String,
+        fromDate: String,
+        toDate: String
     ): ResultState<NewsEntity> {
         return newsRemoteDataSource.getNews(
             page = page,
-            queryType = queryType
+            queryType = queryType,
+            fromDate = fromDate,
+            toDate = toDate
         )
     }
 }

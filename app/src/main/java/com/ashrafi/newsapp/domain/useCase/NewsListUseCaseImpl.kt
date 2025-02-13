@@ -3,6 +3,7 @@ package com.ashrafi.newsapp.domain.useCase
 import com.ashrafi.newsapp.domain.entity.NewsEntity
 import com.ashrafi.newsapp.domain.entity.common.ResultState
 import com.ashrafi.newsapp.domain.repository.NewsRepository
+import com.ashrafi.newsapp.utils.DateTimeUtils
 import javax.inject.Inject
 
 class NewsListUseCaseImpl @Inject constructor(
@@ -13,11 +14,13 @@ class NewsListUseCaseImpl @Inject constructor(
 
     override suspend fun getNewsList(
         page: Int,
-        queryType: String
+        queryType: String,
     ): ResultState<NewsEntity> {
         return newsRepository.getNews(
             page = page,
-            queryType = queryType
+            queryType = queryType,
+            fromDate =DateTimeUtils.getYesterdayDate(),
+            toDate = DateTimeUtils.getCurrentDate()
         )
     }
 
