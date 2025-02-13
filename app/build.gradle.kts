@@ -76,6 +76,6 @@ dependencies {
     implementation(libs.coil.compose)
 
     //dependency injection
-    implementation(libs.hilt.android.v2511)
+    implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 }
