@@ -14,10 +14,10 @@
 You need to supply API key for the service that app uses.
 - [newsApi](https://newsapi.org/register)
 
-Once you obtain the key, you can set it in your [Interceptor] (https://github.com/saeedashrafy/newApp/blob/main/app/src/main/java/com/ashrafi/newsapp/remote/service/interceptor/NetworkInterceptor.kt)
+Once you obtain the key, you can set it in your [Interceptor](https://github.com/saeedashrafy/newApp/blob/main/app/src/main/java/com/ashrafi/newsapp/remote/service/interceptor/NetworkInterceptor.kt)
 
 ## Demo
 
-<img src="https://github.com/saeedashrafy/newApp/blob/main/IMG_2990.JPG)" width=240 />
+<img src="https://github.com/saeedashrafy/newApp/blob/main/IMG_2990.JPG" width=240 />
 
-<img src="[https://github.com/saeedashrafy/clean_mvvm_socket/blob/main/demo.gif](https://github.com/saeedashrafy/newApp/blob/main/IMG_2989.JPG)" width=240 />
+<img src="https://github.com/saeedashrafy/newApp/blob/main/IMG_2989.JPG" width=240 />
